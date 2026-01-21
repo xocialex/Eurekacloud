@@ -1,0 +1,212 @@
+<section class="forms-basic">
+  <div class="page-header">
+    <h1>{{vm.isEdit ? 'Editar presupuesto' : 'Crear presupuesto'}}</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form ng-submit="vm.save()">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Nombre</label>
+              <input class="form-control" ng-model="vm.budget.name" />
+            </div>
+            <div class="form-group">
+              <label>Cliente</label>
+              <input class="form-control" ng-model="vm.budget.clientName" />
+            </div>
+            <div class="form-group">
+              <label>Fecha</label>
+              <input
+                class="form-control"
+                type="date"
+                ng-model="vm.budget.date"
+              />
+            </div>
+            <div class="form-group">
+              <label>URL miniatura</label>
+              <div class="input-group">
+                <input class="form-control" ng-model="vm.budget.thumbnail" />
+                <span class="input-group-btn">
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    ng-click="vm.budget.thumbnail = ''"
+                  >
+                    Eliminar
+                  </button>
+                </span>
+              </div>
+              <div class="m-t-10" ng-if="vm.budget.thumbnail">
+                <img
+                  ng-src="{{vm.budget.thumbnail}}"
+                  alt="miniatura"
+                  width="120"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <p><strong>Coste total:</strong> {{vm.budget.totalCost}}</p>
+                <p><strong>Venta total:</strong> {{vm.budget.totalSale}}</p>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <button class="btn btn-primary" type="submit">Guardar</button>
+              <button
+                class="btn btn-primary"
+                type="button"
+                ng-click="vm.cancel()"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Capítulos</h3>
+    </div>
+    <div class="panel-body">
+      <div class="m-b-10">
+        <button class="btn btn-primary" ng-click="vm.addChapter()">
+          Añadir capítulo
+        </button>
+      </div>
+
+      <div ng-if="(vm.budget.chapters || []).length === 0">
+        No hay capítulos añadidos.
+      </div>
+
+      <div ng-repeat="chapter in vm.budget.chapters">
+        <div class="panel panel-default m-b-10">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label>Descripción capítulo {{chapter.rank}}</label>
+                  <input class="form-control" ng-model="chapter.description" />
+                </div>
+                <div class="form-inline">
+                  <div class="form-group m-r-10">
+                    <label>Coef. venta material</label>
+                    <input
+                      class="form-control"
+                      type="number"
+                      step="0.01"
+                      ng-model="chapter.saleCoefMaterial"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Coef. venta mano de obra</label>
+                    <input
+                      class="form-control"
+                      type="number"
+                      step="0.01"
+                      ng-model="chapter.saleCoefLabour"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 text-right">
+                <p><strong>Coste capítulo:</strong> {{chapter.totalCost}}</p>
+                <p><strong>Venta capítulo:</strong> {{chapter.totalSale}}</p>
+                <div>
+                  <button
+                    class="btn btn-primary"
+                    ng-click="vm.addBatch(chapter)"
+                  >
+                    <i class="fa fa-plus fa-fw"></i> Añadir partida
+                  </button>
+                  <button
+                    class="btn btn-primary"
+                    ng-click="vm.deleteChapter(chapter)"
+                  >
+                    <i class="fa fa-trash-o fa-fw"></i> Eliminar capítulo
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive m-t-10">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Coste material</th>
+                    <th>Coste mano obra</th>
+                    <th>Coste unitario</th>
+                    <th>Coste total</th>
+                    <th>Venta unitaria</th>
+                    <th>Venta total</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="batch in chapter.batches">
+                    <td>{{batch.rank}}</td>
+                    <td>
+                      <input
+                        class="form-control"
+                        ng-model="batch.description"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="form-control"
+                        type="number"
+                        ng-model="batch.amount"
+                        ng-change="vm.updateTotals()"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="form-control"
+                        type="number"
+                        ng-model="batch.materialCost"
+                        ng-change="vm.updateTotals()"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="form-control"
+                        type="number"
+                        ng-model="batch.labourCost"
+                        ng-change="vm.updateTotals()"
+                      />
+                    </td>
+                    <td>{{batch.unitaryCost}}</td>
+                    <td>{{batch.totalCost}}</td>
+                    <td>{{batch.unitarySale}}</td>
+                    <td>{{batch.totalSale}}</td>
+                    <td>
+                      <button
+                        class="btn btn-xs btn-primary"
+                        ng-click="vm.deleteBatch(chapter, batch)"
+                      >
+                        <i class="fa fa-trash-o fa-fw"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4>Total presupuesto: {{vm.budget.totalCost}} | {{vm.budget.totalSale}}</h4>
+</section>

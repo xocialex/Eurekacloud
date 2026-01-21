@@ -1,0 +1,78 @@
+<section class="forms-basic">
+  <div class="page-header">
+    <h1>Listado de presupuestos</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="row m-b-10">
+        <div class="col-md-3">
+          <input
+            class="form-control"
+            placeholder="Filtrar por nombre"
+            ng-model="vm.filters.name"
+          />
+        </div>
+        <div class="col-md-3">
+          <input
+            class="form-control"
+            placeholder="Filtrar por cliente"
+            ng-model="vm.filters.client"
+          />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" type="date" ng-model="vm.filters.from" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" type="date" ng-model="vm.filters.to" />
+        </div>
+        <div class="col-md-2 text-right">
+          <button class="btn btn-primary" ng-click="vm.create()">
+            Crear presupuesto
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Coste total</th>
+              <th>Venta total</th>
+              <th>Miniatura</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              ng-repeat="b in vm.budgets | filter:{name: vm.filters.name, clientName: vm.filters.client}"
+            >
+              <td>{{b.name}}</td>
+              <td>{{b.clientName}}</td>
+              <td>{{b.date | date}}</td>
+              <td>{{b.totalCost}}</td>
+              <td>{{b.totalSale}}</td>
+              <td>
+                <img ng-if="b.thumbnail" ng-src="{{b.thumbnail}}" width="50" />
+              </td>
+              <td>
+                <button class="btn btn-xs btn-primary" ng-click="vm.edit(b.id)">
+                  <i class="fa fa-pencil fa-fw"></i>
+                </button>
+                <button
+                  class="btn btn-xs btn-primary"
+                  ng-click="vm.delete(b.id)"
+                >
+                  <i class="fa fa-trash-o fa-fw"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
